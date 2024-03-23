@@ -22,7 +22,25 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	router.NewUserRouter(*controller.NewAuthController(*service.NewUserService(db))).AuthRouter(ginEngine)
+	///Dependency Injection User & Auth
+	userService := *service.NewUserService(db)
+	authController :=*controller.NewAuthController(&userService)
+	userController :=*controller.NewUserController(&userService)
+	router.NewUserRouter(authController, userController).AuthRouter(ginEngine)
+	//Dependency Injection Photo
+	photoService := *service.NewPhotoService(db)
+	photoController := *controller.NewPhotoController(&photoService)
+	router.NewPhotoRouter(photoController).PhotoRouter(ginEngine)
+	//Dependency Injection Sosmed
+	socialMediaService := *service.NewSocialMedia(db)
+	socialMediaController:=*controller.NewSocialMediaController(&socialMediaService)
+	router.NewSocialMediaRouter(socialMediaController).SocialMediaRouter(ginEngine)
+	//Dependency Injection Comment
+	commentService := *service.NewCommentService(db)
+	commentController := *controller.NewCommentService(&commentService)
+	router.NewCommentRouter(commentController).CommentRouter(ginEngine)
+
+
 
 	ginEngine.Run("localhost:8000")
 }

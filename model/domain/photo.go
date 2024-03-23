@@ -1,14 +1,27 @@
 package domain
 
-import "time"
+import (
+	"time"
 
-type Photo struct {
-	ID        uint   `gorm:"primaryKey"`
-	Title     string `gorm:"not null"`
-	Caption   string
-	PhotoUrl  string `gorm:"not null"`
-	UserID    uint   `gorm:"not null"`
-	User      User   `gorm:"foreignKey:UserID"`
-	UpdatedAt time.Time
-	CreatedAt time.Time
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+)
+
+	type Photo struct {
+		ID        uuid.UUID   `gorm:"primaryKey"`
+		Title     string `gorm:"not null"`
+		Caption   string
+		PhotoUrl  string `gorm:"not null"`
+		UserID    uuid.UUID   `gorm:"not null"`
+		User      User   `gorm:"foreignKey:UserID"`
+		DeletedAt gorm.DeletedAt
+		UpdatedAt time.Time
+		CreatedAt time.Time
+	}
+
+	func (photo *Photo) BeforeCreate(db *gorm.DB) error {
+
+	photo.ID = uuid.New()
+
+	return nil
 }
